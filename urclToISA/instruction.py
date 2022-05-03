@@ -68,13 +68,11 @@ IN
 OUT
 """.splitlines()
 
-Opcode = Enum("Opcode", " ".join(opcodes))
-
 class Instruction():
     # ======== Static variables ========
     # There are none
 
-    def __init__(self, opcode=Opcode.NOP, operands=[], labels=[]):
+    def __init__(self, opcode="NOP", operands=[], labels=[]):
         # A unique ID to differentiate instructions with identical attribute values
         self.opcode = opcode
         self.operands = operands
@@ -96,9 +94,9 @@ class Instruction():
             words = words[1:]
         # Attempt to recognise an opcode, if can't then assume NOP
         opcode = None
-        for o, opc in enumerate(opcodes):
+        for opc in opcodes:
             if opc == words[0]:
-                opcode = o+1
+                opcode = opc
         if not opcode:
             raise ValueError(f"Cannot parse instruction '{instruction}', unknown opcode.")
         if len(words) == 1:
@@ -122,16 +120,13 @@ class Instruction():
                 return copy.deepcopy(case.code)
         return None
 
-    def opcodeString(self):
-        return opcodes[self.opcode-1]
-
     def toString(self, indent=0):
         out = "" if not self.labels else f"{' '.join(lab.toString() for lab in self.labels):>{indent}} "
-        out += f"{opcodes[self.opcode-1]}" + " ".join(op.toString() for op in self.operands)
+        out += f"{self.opcode}" + " ".join(op.toString() for op in self.operands)
         return out
 
     def toColour(self, indent=0):
         out = Style.BRIGHT
         out += " "*(indent+1) if not self.labels else f"{Fore.YELLOW}{' '.join(lab.toString() for lab in self.labels):>{indent}} {Fore.RESET}"
-        out += f"{Fore.BLUE}{opcodes[self.opcode-1]} {Style.RESET_ALL}" + " ".join(op.toColour() for op in self.operands)
+        out += f"{Fore.BLUE}{self.opcode} {Style.RESET_ALL}" + " ".join(op.toColour() for op in self.operands)
         return out

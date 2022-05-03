@@ -1,0 +1,49 @@
+/* ADD
+Add Op2 to Op3 then put result into Op1
+*/
+ADD :: R A A {
+@A = @B + @C
+}
+
+/* NOR
+Bitwise NOR on Op2 and Op3 then put the result into Op1
+*/
+NOR :: R A A {
+@A = ~(@B | @C)
+}
+
+/* IMM
+Set Op1 to the immediate value Op2
+*/
+IMM :: R I {
+@A = @B
+}
+
+/* RSH
+Set Op1 to Op2 right-shifted
+*/
+RSH :: R A {
+@A = @B / 2
+}
+
+/* STR
+Store Op2 in memory at Op1
+*/
+STR :: A A {
+RAM[@A] = @B
+}
+
+/* LOD
+Load memory at Op2 in Op1
+*/
+LOD :: A A {
+@A = RAM[@B]
+}
+
+/* BGE
+Branch to Op1 if Op2 is greater than or equal to Op3
+*/
+BGE :: A A A {
+if @B >= @C:
+    PC = @A
+}

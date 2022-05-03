@@ -1,6 +1,3 @@
-ADD $3 15 $1
-ADD $3 $2 30
-ADD $3 $2 $1
-ADD $3 15 40
-
+SUB R1 30 15
+OUT %NUMB R1
 HLT

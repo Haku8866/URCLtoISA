@@ -1,0 +1,56 @@
+/* ADD
+Add Op2 to Op3 then put result into Op1
+*/
+ADD :: R R I {
+    IMM R1 @C
+    ADD @A @B R1
+}
+ADD :: R I R {
+    IMM R1 @B
+    ADD @A @C R1
+}
+ADD :: R I I {
+    IMM R1 @B
+    IMM R2 @C
+    ADD @A R1 R2
+}
+
+/* NOR
+Bitwise NOR on Op2 and Op3 then put result into Op1
+*/
+NOR :: R R I {
+    IMM R1 @C
+    NOR @A @B R1
+}
+NOR :: R I R {
+    IMM R1 @B
+    NOR @A @B R1
+}
+NOR :: R I I {
+    IMM R1 @B
+    IMM R2 @C
+    NOR @A R1 R2
+}
+
+/* NOT
+Bitwise NOT on Op2 then put result into Op1
+*/
+NOT :: R A {
+    NOR @A @B 0
+}
+
+/* INC
+Increment Op2 then put the result into Op1
+*/
+INC :: R A {
+    ADD @A @B 1
+}
+
+/* SUB
+Sub Op2 from Op3 then put result into Op1
+*/
+SUB :: R A A {
+    NOT R1 @C
+    INC R1 R1
+    ADD @A @B R1
+}
