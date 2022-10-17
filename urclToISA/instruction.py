@@ -111,22 +111,50 @@ class Instruction():
 
     def match(self, translation):
         for case in translation.cases:
+            backup = self.operands
             match = True
+            opNum = 0
+            infixes = ["==", "~~", "<>", "!=", "!~"]
             for p,param in enumerate(case.params):
-                if not Case.match(self.operands[p], param):
-                    match = False
-                    break
+                if param in infixes:
+                    op1 = self.operands[opNum]
+                    op2 = self.operands[(opNum + 1) % len(self.operands)]
+                    if param == "==" and (op1.value != op2.value or  op1.type != op2.type) \
+                    or param == "!=" and (op1.value == op2.value and op1.type == op2.type) \
+                    or param == "~~" and (op1.type != op2.type) \
+                    or param == "!~" and (op1.type == op2.type):
+                        match = False
+                        break
+                    if param == "<>":
+                        if not (Case.match(op1, case.params[p-1]) and Case.match(op2, case.params[(p+1) % len(case.params)])):
+                            if (Case.match(op2, case.params[p-1]) and Case.match(op1, case.params[(p+1) % len(case.params)])):
+                                self.operands[opNum] = op2
+                                self.operands[(opNum+1)%len(self.operands)] = op1
+                            else:
+                                match = False
+                                break
+                        opNum += 1
+                        continue
+                else:
+                    if param != case.params[-1]:
+                        if case.params[p+1] == "<>":
+                            continue
+                    if not Case.match(self.operands[opNum], param):
+                        match = False
+                        break
+                    opNum += 1
             if match:
                 return copy.deepcopy(case.code)
+            self.operands = backup
         return None
 
     def toString(self, indent=0):
-        out = "" if not self.labels else f"{' '.join(lab.toString() for lab in self.labels):>{indent}} "
+        out = "" if not self.labels else f"{' '.join(self.labels):>{indent}} "
         out += f"{self.opcode}" + " ".join(op.toString() for op in self.operands)
         return out
 
     def toColour(self, indent=0):
         out = Style.BRIGHT
-        out += " "*(indent+1) if not self.labels else f"{Fore.YELLOW}{' '.join(lab.toString() for lab in self.labels):>{indent}} {Fore.RESET}"
+        out += " "*(indent+1) if not self.labels else f"{Fore.YELLOW}{' '.join(self.labels):>{indent}} {Fore.RESET}"
         out += f"{Fore.BLUE}{self.opcode} {Style.RESET_ALL}" + " ".join(op.toColour() for op in self.operands)
         return out

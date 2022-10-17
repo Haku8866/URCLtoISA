@@ -116,6 +116,9 @@ class Translation():
         else:
           translation.description.append(line)
         unparsed[l] = None
+      elif " :: " in line and line[-1] == "{":
+        if translations.get(line.split(" :: ")[0]) is None:
+          translations[line.split(" :: ")[0]] = copy.deepcopy(Translation(line.split(" :: ")[0], "URCL", "This instruction is undocumented. :("))
     unparsed = list(filter(None, unparsed))
     return translations, unparsed
 
@@ -143,7 +146,10 @@ class Translation():
           body.append(line)
       elif " :: " in line and line[-1] == "{":
         opcode, params = line.split(" :: ")
-        params = params.rstrip("{")
+        if params == ["{"]:
+          params = ""
+        else:
+          params = params.rstrip("{")
     return translations
 
   @staticmethod

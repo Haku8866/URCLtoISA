@@ -80,6 +80,14 @@ class Program():
                     if opr.value.isalpha() and len(opr.value) == 1:
                         self.code[i].operands[o] = opr.extra[opr.value]
 
+    def relativesToLabels(self):
+        for i,ins in enumerate(self.code):
+            for o,opr in enumerate(ins.operands):
+                if opr.type == OpType.RELATIVE:
+                    self.code[i + int(opr.value)].labels.append(f"{ins.opcode}_{self.uid}")
+                    self.code[i].operands[o] = Operand.parse(f".{ins.opcode}_{self.uid}")
+                    self.uid += 1
+
     @staticmethod
     # The program is a list of strings
     def parse(program):
