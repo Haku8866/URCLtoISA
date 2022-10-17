@@ -72,21 +72,21 @@ class Instruction():
     # ======== Static variables ========
     # There are none
 
-    def __init__(self, opcode="NOP", operands=[], labels=[]):
+    def __init__(self, opcode="NOP", operands:list[Operand]=[], labels:list[Operand]=[]):
         # A unique ID to differentiate instructions with identical attribute values
         self.opcode = opcode
         self.operands = operands
         self.labels = labels
 
     @staticmethod
-    def parse(instruction):
+    def parse(instruction: str):
         # Split the instruction based on spaces, stripping comments
         words = instruction.split()
         # Can't parse nothing
         if len(words) == 0:
             return None
         # Collect any labels
-        labels = []
+        labels: list[Operand] = []
         while words[0][0] == ".":
             labels.append(Operand.parse(words[0]))
             if len(words) == 1:
@@ -102,14 +102,14 @@ class Instruction():
         if len(words) == 1:
             return Instruction(opcode)
         words = words[1:]
-        operands = []
+        operands: list[Operand] = []
         for word in words:
             operands.append(Operand.parse(word))
         return Instruction(opcode, operands, labels)
 
     # ======== Instruction methods ========
 
-    def match(self, translation):
+    def match(self, translation: Translation):
         for case in translation.cases:
             backup = self.operands
             match = True

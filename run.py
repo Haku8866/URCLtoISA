@@ -43,7 +43,7 @@ main = Program.parseFile(filename)
 translator = Translator.fromFile(URCLtranslations)
 translatorISA = Translator.fromFile(ISAtranslations)
 
-def translate(program, trans):
+def translate(program: Program, trans: Translator):
     done = False
     while not done:
         done = True
@@ -59,8 +59,8 @@ def translate(program, trans):
                 break
     return program
 
-def translateISA(program, trans):
-    out = []
+def translateISA(program: Program, trans: Translator):
+    out: list[Block] = []
     for l,ins in enumerate(program.code):
         out.append(Block(ins.labels, trans.substitute(ins)))
     return out

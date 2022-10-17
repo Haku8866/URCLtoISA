@@ -1,21 +1,32 @@
 from enum import Enum
+from enum import auto
 from colorama import Fore, Back, Style
 
 # === Operand types ===
-optypes = \
-"""
-REGISTER
-NUMBER
-ADDRESS
-LABEL
-PORT
-RELATIVE
-NEGATIVE
-STACKPTR
-OTHER
-""".splitlines()
+# optypes = \
+# """
+# REGISTER
+# NUMBER
+# ADDRESS
+# LABEL                   this is bad
+# PORT
+# RELATIVE
+# NEGATIVE
+# STACKPTR
+# OTHER
+# """.splitlines()
 
-OpType = Enum("OpType", " ".join(optypes))
+#OpType = Enum("OpType", " ".join(optypes))
+class OpType(Enum):
+    REGISTER = auto()
+    NUMBER = auto()
+    ADDRESS = auto()
+    LABEL = auto()
+    PORT = auto()#        better, now OpType is an actual type and not just int
+    RELATIVE = auto()
+    NEGATIVE = auto()
+    STACKPTR = auto()
+    OTHER = auto()
 
 class Operand():
     # ======== Static variables ========
@@ -55,7 +66,7 @@ class Operand():
         (lambda a: a[0] == "+",                               OpType.NEGATIVE, lambda a: f"-{a}"),
     ]
 
-    def __init__(self, type=OpType.NUMBER, value="", word=0, extra={}):
+    def __init__(self, type=OpType.NUMBER, value="", word=0, extra:dict[str]={}):
         # Type: OpType.REGISTER, OpType.ADDRESS, OpType.LABEL, ...
         self.type = type
         self.value = value
@@ -67,14 +78,14 @@ class Operand():
 
     # ======== Static methods ========
     @staticmethod
-    def parse(operand):
+    def parse(operand: str):
         # Get the operand type
         typ = Operand.reverse_prefixes.get(operand[0])
         if typ is None:
             for sp_type in Operand.special_types:
                 try:
                     if sp_type[0](operand):
-                        typ = sp_type[1]
+                        typ: OpType = sp_type[1]
                         opr = sp_type[2](operand)
                 except:
                     continue

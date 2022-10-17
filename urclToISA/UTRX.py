@@ -1,4 +1,6 @@
 import copy
+from translator import Translation
+from urclToISA.operand import Operand
 
 class Case():
   alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM"
@@ -12,17 +14,17 @@ class Case():
   }
   types = "ARVSNGZPIMLCO"
 
-  def __init__(self, params, body, language="URCL"):
+  def __init__(self, params: str, body: list[str], language="URCL"):
     self.params = copy.deepcopy(params).split()
     self.string = copy.deepcopy(params)
     self.code = copy.deepcopy(body)
     self.language = copy.deepcopy(language)
 
   @staticmethod
-  def match(operand, param):
+  def match(operand: Operand, param: str):
     invert = False
     typeMatch = False
-    readNum = False
+    readNum = False #
     readStr = False
     num = ""
     s = ""
@@ -71,10 +73,10 @@ class Case():
     return typeMatch
 
 
-class Translation():
-  def __init__(self, opcode, language="URCL", description=[], cases=[]):
+class Translation(): #why is an empty list the default value for "description" (a string)?
+  def __init__(self, opcode: str, language="URCL", description=[], cases:list[Case]=[]):
     self.opcode = opcode
-    self.description = description
+    self.description: str = description
     self.cases = cases
     self.language = language
 
@@ -87,7 +89,7 @@ class Translation():
     for line in self.description:
       out += "\n│ " + f"{line:<{m-4}}" + " │"
     out += "\n├" + "─"*(m-2) + "┤"
-    for case in self.cases:
+    for case in self.cases:               #wut
       out += "\n│ " + f"{self.opcode + ' :: ' + case.string:^{m-4}}" + " │"
       for line in case.code:
         out += "\n│ " + f"{line:<{m-4}}" + " │"
@@ -96,8 +98,8 @@ class Translation():
     return out
 
   @staticmethod
-  def parseDescriptions(unparsed):
-    translations = {}
+  def parseDescriptions(unparsed: str):
+    translations: dict[str, Translation] = {}
     desc = False
     for l, line in enumerate(unparsed):
       if line.startswith("/*"):
@@ -123,18 +125,18 @@ class Translation():
     return translations, unparsed
 
   @staticmethod
-  def readFile(filename):
-    lines = []
+  def readFile(filename: str):
+    lines: list[str] = []
     with open(filename, "r") as f:
       for line in f:
         lines.append(line.rstrip("\n"))
     return lines
 
   @staticmethod
-  def readCases(translations, unparsed):
-    body = []
+  def readCases(translations: dict[str, Translation], unparsed: str):
+    body: list[str] = []
     opcode = ""
-    params = ""
+    params = "" 
     for line in unparsed:
       if opcode:
         if line == "}":
