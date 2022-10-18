@@ -1,13 +1,13 @@
-from urclToISA.UTRX import Translation, Case
-from urclToISA.instruction import Instruction
-from urclToISA.program import Program
+from typing import TYPE_CHECKING
 from urclToISA.operand import OpType
-
+from urclToISA.UTRX import Translation
+from urclToISA.program import Program
+if TYPE_CHECKING: from urclToISA.instruction import Instruction
 class Translator():
     def __init__(self, translations: dict[str, Translation]):
         self.translations = translations
 
-    def substitute(self, ins: Instruction):
+    def substitute(self, ins: "Instruction"):
         translation = self.translations.get(ins.opcode)
         if translation is None:
             return ""
@@ -19,7 +19,7 @@ class Translator():
                 body[l] = body[l].replace(f"@{chr(65+i)}", ins.operands[i].toString())
         return body
 
-    def substituteURCL(self, ins: Instruction):
+    def substituteURCL(self, ins: "Instruction"):
         translation = self.translations.get(ins.opcode)
         if translation is None:
             return ""

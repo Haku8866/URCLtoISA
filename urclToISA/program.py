@@ -1,5 +1,5 @@
-from urclToISA.instruction import Instruction
 from urclToISA.operand import Operand, OpType
+from urclToISA.instruction import Instruction
 from enum import Enum
 from colorama import init
 

@@ -1,5 +1,8 @@
-from urclToISA.operand import Operand, OpType
-from urclToISA.UTRX import Case, Translation
+from urclToISA.operand import Operand
+from urclToISA.UTRX import Case
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from urclToISA.translator import Translation
 from enum import Enum
 from colorama import Fore, Back, Style
 import copy
@@ -72,7 +75,7 @@ class Instruction():
     # ======== Static variables ========
     # There are none
 
-    def __init__(self, opcode="NOP", operands:list[Operand]=[], labels:list[Operand]=[]):
+    def __init__(self, opcode="NOP", operands:list["Operand"]=[], labels:list["Operand"]=[]):
         # A unique ID to differentiate instructions with identical attribute values
         self.opcode = opcode
         self.operands = operands
@@ -86,7 +89,7 @@ class Instruction():
         if len(words) == 0:
             return None
         # Collect any labels
-        labels: list[Operand] = []
+        labels: list["Operand"] = []
         while words[0][0] == ".":
             labels.append(Operand.parse(words[0]))
             if len(words) == 1:
@@ -109,7 +112,7 @@ class Instruction():
 
     # ======== Instruction methods ========
 
-    def match(self, translation: Translation):
+    def match(self, translation: "Translation"):
         for case in translation.cases:
             backup = self.operands
             match = True

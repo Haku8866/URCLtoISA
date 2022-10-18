@@ -1,6 +1,8 @@
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+  from urclToISA.operand import Operand
+  from urclToISA.translator import Translation
 import copy
-from translator import Translation
-from urclToISA.operand import Operand
 
 class Case():
   alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM"
@@ -21,7 +23,7 @@ class Case():
     self.language = copy.deepcopy(language)
 
   @staticmethod
-  def match(operand: Operand, param: str):
+  def match(operand: "Operand", param: str):
     invert = False
     typeMatch = False
     readNum = False #
@@ -73,10 +75,10 @@ class Case():
     return typeMatch
 
 
-class Translation(): #why is an empty list the default value for "description" (a string)?
-  def __init__(self, opcode: str, language="URCL", description=[], cases:list[Case]=[]):
+class Translation():
+  def __init__(self, opcode: str, language="URCL", description:list[str]=[], cases:list[Case]=[]):
     self.opcode = opcode
-    self.description: str = description
+    self.description = description
     self.cases = cases
     self.language = language
 
@@ -99,7 +101,7 @@ class Translation(): #why is an empty list the default value for "description" (
 
   @staticmethod
   def parseDescriptions(unparsed: str):
-    translations: dict[str, Translation] = {}
+    translations: dict[str, "Translation"] = {}
     desc = False
     for l, line in enumerate(unparsed):
       if line.startswith("/*"):
@@ -133,7 +135,7 @@ class Translation(): #why is an empty list the default value for "description" (
     return lines
 
   @staticmethod
-  def readCases(translations: dict[str, Translation], unparsed: str):
+  def readCases(translations: dict[str, "Translation"], unparsed: str):
     body: list[str] = []
     opcode = ""
     params = "" 
