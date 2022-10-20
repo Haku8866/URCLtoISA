@@ -1,5 +1,8 @@
+from typing import TYPE_CHECKING
+from urclToISA.operand import Operand 
+
 class Block():
-    def __init__(self, URCL_labels=[], code=[]):
+    def __init__(self, URCL_labels:list[Operand]=[], code:list[str]=[]):
         self.URCL_labels = URCL_labels
         self.code = code
     

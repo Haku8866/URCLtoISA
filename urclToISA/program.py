@@ -1,5 +1,5 @@
-from urclToISA.instruction import Instruction
 from urclToISA.operand import Operand, OpType
+from urclToISA.instruction import Instruction
 from enum import Enum
 from colorama import init
 
@@ -17,11 +17,11 @@ MINSTACK
 Header = Enum("Header", " ".join(headers))
 
 class Program():
-    def __init__(self, code=[], headers={}, regs=[]):
+    def __init__(self, code:list[Instruction]=[], headers:dict[int, str]={}, regs:list[str]=[]):
         self.code = code
         self.headers = headers
-        self.regs = regs
-        self.uid = 0
+        self.regs: list[str] = regs
+        self.uid: int = 0
 
     def makeRegsNumeric(self):
         for i,ins in enumerate(self.code):
@@ -65,7 +65,7 @@ class Program():
         self.code[index:index] = program.code
         self.regs = list(set(self.regs + program.regs))
 
-    def rename(self, oldname, newname, type=OpType.REGISTER):
+    def rename(self, oldname: str, newname: str, type=OpType.REGISTER):
         for i,ins in enumerate(self.code):
             for o,opr in enumerate(ins.operands):
                 if opr.type == type and opr.value == oldname:
@@ -90,10 +90,10 @@ class Program():
 
     @staticmethod
     # The program is a list of strings
-    def parse(program):
-        headers = {}
-        code = []
-        regs = []
+    def parse(program: list[str]):
+        headers: dict[int, str] = {}
+        code: list[Instruction] = []
+        regs: list[str] = []
         skip = False
         for line in program:
             if "*/" in line:
@@ -127,13 +127,13 @@ class Program():
         return Program(code, headers, regs)
 
     @staticmethod
-    def parseFile(filename):
+    def parseFile(filename: str):
         with open(filename, "r") as f:
             lines = [l.strip() for l in f]
         return Program.parse(lines)
 
     @staticmethod
-    def parseHeader(line):
+    def parseHeader(line: str):
         line = line.split()
         if len(line) < 2 or line[0] not in headers:
             return None
