@@ -63,7 +63,7 @@ OUT :: O I {
 }
 
 ┌──────────────────────────────────────────────────────────────────┐
-| Basic to core.                                                   |
+| Basic instructions.                                              |
 └──────────────────────────────────────────────────────────────────┘
 
 SUB :: R A == A {
@@ -228,4 +228,163 @@ BNC :: A A A {
     ADD R1 @B @C
     BRL ~+2 R1 @B
     BGE @A R1 @C
+}
+
+┌──────────────────────────────────────────────────────────────────┐
+| Complex instructions.                                            |
+└──────────────────────────────────────────────────────────────────┘
+
+LLOD :: R A A {
+    ADD @A @B @C
+    LOD @A @A
+}
+LSTR :: A A A {
+    ADD R1 @A @B
+    STR @C R1
+}
+MLT :: R A A {
+    MOV R1 @B
+    MOV R2 @C
+    IMM @A 0
+    BEV ~+2 R2
+    ADD @A @A R1
+    RSH R2 R2
+    LSH R1 R1
+    BNZ ~-4 R2
+}
+DIV :: R A A != {
+    BRL ~+7 @B @C
+    MOV R1 @B
+    IMM @A 0
+    INC @A @A
+    SUB R1 R1 @C
+    BGE ~-2 R1 @C
+    JMP ~+2
+    IMM @A R0
+}
+DIV :: R A A {
+    BRL ~+9 @B @C
+    MOV R1 @B
+    MOV R2 @C
+    MOV @A R0
+    INC @A @A
+    SUB R1 R1 R2
+    BGE ~-2 R1 R2
+    JMP ~+2
+    MOV @A R0
+}
+SDIV :: R A A {
+    NOP
+}
+MOD :: R A A != {
+    MOV @A @B
+    BRL ~+3 @A @C
+    SUB @A @A @C
+    JMP ~-2
+}
+MOD :: R A A {
+    MOV R1 @C
+    MOV @A @B
+    BRL ~+3 @B R1
+    SUB @A @A R1
+    JMP ~-2
+}
+BSR :: R A A {
+    MOV R1 @C
+    MOV @A @B
+    BRZ ~+4 R1
+    RSH @A @A
+    DEC R1 R1
+    JMP ~-3
+}
+BSL :: R A A {
+    MOV R1 @C
+    MOV @A @B
+    BRZ ~+4 R1
+    LSH @A @A
+    DEC R1 R1
+    JMP ~-3
+}
+SRS :: R A {
+    BRN ~+3 @B
+    RSH @A @B
+    JMP ~+3
+    RSH @A @B
+    ADD @A @A @MSB
+}
+BSS :: R A A {
+    MOV R1 @C
+    MOV @A @B
+    BRZ ~+4 R1
+    SRS @A @A
+    DEC R1 R1
+    JMP ~-3
+}
+SBRL :: A A A {
+    NOP
+}
+SBRG :: A A A {
+    NOP
+}
+SBLE :: A A A {
+    NOP
+}
+SBGE :: A A A {
+    NOP
+}
+SETE :: R A A {
+    IMM @A 1
+    BRE ~+2 @B @C
+    IMM @A 0
+}
+SETNE :: R A A {
+    IMM @A 1
+    BNE ~+2 @B @C
+    IMM @A 0
+}
+SETG :: R A A {
+    IMM @A 1
+    BRG ~+2 @B @C
+    IMM @A 0
+}
+SETL :: R A A {
+    IMM @A 1
+    BRL ~+2 @B @C
+    IMM @A 0
+}
+SETGE :: R A A {
+    IMM @A 1
+    BGE ~+2 @B @C
+    IMM @A 0
+}
+SETLE :: R A A {
+    IMM @A 1
+    BLE ~+2 @B @C
+    IMM @A 0
+}
+SETC :: R A A {
+    MOV R1 @B
+    BRG ~+2 @B @C
+    MOV R1 @C
+    ADD @A @B @C
+    SETL @A @A R1
+}
+SETNC :: R A A {
+    MOV R1 @B
+    BRG ~+2 @B @C
+    MOV R1 @C
+    ADD @A @B @C
+    SETGE @A @A R1
+}
+SSETG :: R A A {
+    NOP
+}
+SSETL :: R A A {
+    NOP
+}
+SSETGE :: R A A {
+    NOP
+}
+SSETLE :: R A A {
+    NOP
 }
