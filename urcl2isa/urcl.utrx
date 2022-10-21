@@ -1,23 +1,98 @@
+┌──────────────────────────────────────────────────────────────────┐
+| Core instructions to reg-only.                                   |
+└──────────────────────────────────────────────────────────────────┘
+
 ADD :: R R <> I {
     IMM R1 @C
     ADD @A @B R1
 }
 ADD :: R I I {
     IMM R1 @B
-    IMM R2 @C
-    ADD @A R1 R2
+    ADD @A R1 @C
+}
+IMM :: R R {
+    ADD @A @B R0
 }
 NOR :: R R <> I {
     IMM R1 @C
     NOR @A @B R1
 }
 NOR :: R I I {
-    IMM R1 @B
-    IMM R2 @C
-    NOR @A R1 R2
+    IMM @A @B
+    NOR @A @A @C
 }
-NOT :: R A {
-    NOR @A @B 0
+RSH :: R I {
+    IMM @A @B
+    RSH @A @A
+}
+BGE :: A A == A {
+    BGE @A R0 R0
+}
+BGE :: I A A {
+    IMM R1 @A
+    BGE R1 @B @C
+}
+BGE :: R R I {
+    IMM R1 @C
+    BGE @A @B R1
+}
+BGE :: R I R {
+    IMM R1 @B
+    BGE @A R1 @C
+}
+BGE :: R I I {
+    BGE R1 @B
+    BGE R2 @C
+    BGE @A @B @C
+}
+LOD :: R I {
+    IMM R1 @B
+    LOD @A R1
+}
+STR :: A I {
+    IMM R1 @B
+    STR @A R1
+}
+STR :: I A {
+    IMM R1 @A
+    STR R1 @B
+}
+OUT :: O I {
+    IMM R1 @B
+    OUT @A R1
+}
+
+┌──────────────────────────────────────────────────────────────────┐
+| Basic to core.                                                   |
+└──────────────────────────────────────────────────────────────────┘
+
+SUB :: R A == A {
+    IMM @A 0
+}
+SUB :: R != A A {
+    NOR @A @C R0
+    ADD @A @A @B
+    INC @A @A
+}
+SUB :: R A R != {
+    NOT @C @C
+    ADD @A @B @C
+    INC @A @A
+    NOT @C @C
+}
+SUB :: R A A {
+    NOT R1 @C
+    ADD @A @B R1
+    INC @A @A
+}
+JMP :: A A {
+    BGE @A R0 R0
+}
+MOV :: A A {
+    ADD @A @B R0
+}
+LSH :: R A {
+    ADD @A @B @B
 }
 INC :: R A {
     ADD @A @B 1
@@ -25,43 +100,132 @@ INC :: R A {
 DEC :: R A {
     SUB @A @B 1
 }
-SUB :: R A == A {
-    IMM @A 0
+NEG :: R A {
+    NOT @A @B
+    INC @A @A
 }
-SUB :: R A A {
-    NOT R1 @C
-    INC R1 R1
-    ADD @A @B R1
+AND :: R A == A {
+    MOV @C @A
+}
+AND :: R A R != {
+    NOT @A @B
+    NOT @C @C
+    NOR @A @A @C
+    NOT @C @C
+}
+AND :: R != R A {
+    NOT @B @B
+    NOT @A @C
+    NOR @A @A @B
+    NOT @B @B
+}
+AND :: R A A {
+    NOT R1 @B
+    NOT R2 @C
+    NOR @A R1 R2
+}
+OR :: R A A {
+    NOR @A @B @C
+    NOT @A @A
+}
+NOT :: R A {
+    NOR @A @B R0
+}
+XOR :: R A == A {
+    MOV @A R0
+}
+XOR :: R A A {
+    AND @A @B @C
+    NOR R1 @B @C
+    NOR @A @A R1
+}
+XNOR :: R A == A {
+    IMM @A -1
+}
+XNOR :: R A A {
+    XOR @A @B @C
+    NOT @A @A
+}
+NAND :: R A == A {
+    NOT @A @B
+}
+NAND :: R A A {
+    AND @A @B @C
+    NOT @A @A
+}
+BRL :: A A A {
+    BGE ~+2 @B @C
+    JMP @A
+}
+BRG :: A A A {
+    BRL @A @C @B
+}
+BRE :: A A A {
+    BRL ~+3 @B @C
+    BRG ~+2 @B @C
+    JMP @A
+}
+BNE :: A A A {
+    BGE ~+2 @B @C
+    JMP @A
+    BGE ~+2 @C @B
+    JMP @A
+}
+BOD :: A A {
+    AND R1 @B 1
+    BGE @A R1 1
+}
+BEV :: A A {
+    AND R1 @B 1
+    BRZ @A R1 R0
+}
+BLE :: A A A {
+    BGE @A @C @B
+}
+BRZ :: A A A {
+    BGE ~+2 @B 1
+    JMP @A
+}
+BNZ :: A A A {
+    BGE @A @B 1
+}
+BRN :: A A A {
+    BGE @A @B &1(0)
+}
+BRP :: A A A {
+    BGE ~+2 @B &1(0)
+    JMP @A
+}
+PSH :: A {
+    DEC SP SP
+    STR SP @A
+}
+POP :: R {
+    LOD @A SP
+    INC SP SP
+}
+CAL :: A {
+    PSH ~+2
+    JMP @A
+}
+RET :: {
+    POP R1
+    JMP R1
 }
 HLT :: {
     JMP ~+0
 }
-JMP :: A {
-    BGE @A R0 R0
+CPY :: A A {
+    LOD R1 @B
+    STR @A R1
 }
-MOV :: R I {
-    IMM @A @B
+BRC :: A A A {
+    ADD R1 @B @C
+    BRL @A R1 @B
+    BRL @A R1 @C
 }
-MOV :: R R {
-    ADD @A @B 0
-}
-DEC :: R R {
-    SUB @A @B 1
-}
-BNZ :: A A {
-    BGE ~+2 @B 1
-    JMP @A 
-}
-BGE :: I R A {
-    IMM R1 @A
-    BGE R1 @B @C
-}
-MLT :: R A <> Z {
-    IMM @A 0
-}
-MLT :: R A A {
-    MOV @A @B
-    .loop
-    DEC @C @C
-    BNZ .loop @C
+BNC :: A A A {
+    ADD R1 @B @C
+    BRL ~+2 R1 @B
+    BGE @A R1 @C
 }

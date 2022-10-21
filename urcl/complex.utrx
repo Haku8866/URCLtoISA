@@ -52,6 +52,10 @@ JMP :: A A {
     JMP @A @B
 }
 
+MOV :: A A {
+    MOV @A @B
+}
+
 LSH :: R A {
     LSH @A @B
 }
@@ -96,6 +100,10 @@ BRL :: A A A {
     BRL @A @B @C
 }
 
+BRG :: A A A {
+    BRG @A @B @C
+}
+
 BRE :: A A A {
     BRE @A @B @C
 }
@@ -104,12 +112,12 @@ BNE :: A A A {
     BNE @A @B @C
 }
 
-BOD :: A A A {
-    BOD @A @B @C
+BOD :: A A {
+    BOD @A @B
 }
 
-BEV :: A A A {
-    BEV @A @B @C
+BEV :: A A {
+    BEV @A @B
 }
 
 BLE :: A A A {
