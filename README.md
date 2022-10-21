@@ -40,9 +40,10 @@ You may also use `basic.utrx` and `complex.utrx`.
 
 There are a number of flags you may provide too:
 ```
--f : File   : URCL file to be translated
--t : Target : UTRX file containing translations
--o : Output : File to store output in
--s : Silent : Hide terminal output
--b : Boring : Remove colour from terminal output :(
+-f : File     : URCL file to be translated
+-t : Target   : UTRX file containing translations
+-o : Output   : File to store output in
+-s : Silent   : Hide terminal output
+-b : Boring   : Remove colour from terminal output :(
+-w : WordSize : The size of a word
 ```

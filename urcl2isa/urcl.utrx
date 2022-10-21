@@ -190,10 +190,10 @@ BNZ :: A A A {
     BGE @A @B 1
 }
 BRN :: A A A {
-    BGE @A @B &1(0)
+    BGE @A @B @MSB
 }
 BRP :: A A A {
-    BGE ~+2 @B &1(0)
+    BGE ~+2 @B @MSB
     JMP @A
 }
 PSH :: A {

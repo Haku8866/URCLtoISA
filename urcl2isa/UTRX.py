@@ -26,7 +26,7 @@ class Case():
   def match(operand: "Operand", param: str):
     invert = False
     typeMatch = False
-    readNum = False #
+    readNum = False
     readStr = False
     num = ""
     s = ""
@@ -91,7 +91,7 @@ class Translation():
     for line in self.description:
       out += "\n│ " + f"{line:<{m-4}}" + " │"
     out += "\n├" + "─"*(m-2) + "┤"
-    for case in self.cases:               #wut
+    for case in self.cases:
       out += "\n│ " + f"{self.opcode + ' :: ' + case.string:^{m-4}}" + " │"
       for line in case.code:
         out += "\n│ " + f"{line:<{m-4}}" + " │"

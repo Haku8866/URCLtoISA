@@ -95,7 +95,7 @@ class Program():
 
     @staticmethod
     # The program is a list of strings
-    def parse(program: list[str]):
+    def parse(program: list[str], wordSize: int=8):
         headers: dict[int, str] = {}
         code: list[Instruction] = []
         regs: list[str] = []
@@ -124,10 +124,30 @@ class Program():
                     if code[-1].labels is not None:
                         ins.labels += code[-1].labels
                     code = code[:-1]
-            for operand in ins.operands:
+            for o,operand in enumerate(ins.operands):
                 if operand.type == OpType.REGISTER:
                     if operand.value not in regs:
                         regs.append(operand.value)
+                if operand.type == OpType.OTHER:
+                    v = operand.value
+                    if v == "MAX":
+                        v = 2**(wordSize)-1
+                    elif v == "SMAX":
+                        v = 2**(wordSize)-1 - 2**(wordSize-1)
+                    elif v == "MSB":
+                        v = 2**(wordSize-1)
+                    elif v == "SMSB":
+                        v = 2**(wordSize-2)
+                    elif v == "UHALF":
+                        v = 2**(wordSize) - 2**(wordSize/2)
+                    elif v == "LHALF":
+                        v = 2**(wordSize/2)-1
+                    elif v == "BITS":
+                        v = wordSize
+                    else:
+                        continue
+                    ins.operands[o].value = int(v)
+                    ins.operands[o].type = OpType.NUMBER
             code.append(ins)
         return Program(code, headers, regs)
 

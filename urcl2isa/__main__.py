@@ -12,6 +12,7 @@ def main():
     p.add_argument("-o", "--Output", help="File to store output in")
     p.add_argument("-s", "--Silent", help="Hide terminal output")
     p.add_argument("-b", "--Boring", help="Give uncoloured output")
+    p.add_argument("-w", "--WordSize", help="The size of a word")
 
     argv = p.parse_args()
 
@@ -22,6 +23,9 @@ def main():
     ISAtranslations = "core.utrx"
     if argv.Target:
         ISAtranslations = argv.Target
+    wordSize = 8
+    if argv.WordSize:
+        wordSize = int(argv.WordSize)
 
     URCLtranslations = "urcl2isa/urcl.utrx"
 

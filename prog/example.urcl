@@ -1,0 +1,8 @@
+// Some example code for you to translate
+// Try running:
+//      py urcl2isa -f prog/example.urcl -t urcl/core.utrx
+
+IMM R1 15
+IMM R2 30
+SUB R3 R2 R1
+HLT

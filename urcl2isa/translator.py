@@ -19,14 +19,14 @@ class Translator():
                 body[l] = body[l].replace(f"@{chr(65+i)}", ins.operands[i].toString())
         return body
 
-    def substituteURCL(self, ins: "Instruction"):
+    def substituteURCL(self, ins: "Instruction", wordSize: int=8):
         translation = self.translations.get(ins.opcode)
         if translation is None:
             return ""
         body = ins.match(translation)
         if body is None:
-            return "" #why return empty string? NoneType makes more sense in this context
-        sub = Program.parse(body)
+            return ""
+        sub = Program.parse(body, wordSize)
         for i,instr in enumerate(sub.code):
             for o,opr in enumerate(instr.operands):
                 if opr.type == OpType.OTHER:

@@ -2,27 +2,12 @@ from enum import Enum
 from enum import auto
 from colorama import Fore, Back, Style
 
-# === Operand types ===
-# optypes = \
-# """
-# REGISTER
-# NUMBER
-# ADDRESS
-# LABEL                   this is bad
-# PORT
-# RELATIVE
-# NEGATIVE
-# STACKPTR
-# OTHER
-# """.splitlines()
-
-#OpType = Enum("OpType", " ".join(optypes))
 class OpType(Enum):
     REGISTER = auto()
     NUMBER = auto()
     ADDRESS = auto()
     LABEL = auto()
-    PORT = auto()#        better, now OpType is an actual type and not just int
+    PORT = auto()
     RELATIVE = auto()
     NEGATIVE = auto()
     STACKPTR = auto()
