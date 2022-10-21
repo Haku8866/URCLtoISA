@@ -24,9 +24,12 @@ class Program():
         self.uid: int = 0
 
     def makeRegsNumeric(self):
+        self.regs = []
         for i,ins in enumerate(self.code):
             for o,opr in enumerate(ins.operands):
                 if opr.type == OpType.REGISTER and opr.value != "0":
+                    if opr.value not in self.regs:
+                        self.regs.append(opr.value)
                     self.code[i].operands[o].value = str(1+self.regs.index(opr.value))
         for r,reg in enumerate(self.regs):
             self.regs[r] = str(r+1)
