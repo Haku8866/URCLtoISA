@@ -1,0 +1,22 @@
+┌──────────────────────────────────────────────────────────────────┐
+| Feel free to add more cases, this is just the bare minimum.      |
+└──────────────────────────────────────────────────────────────────┘
+
+ADD :: R R R {
+}
+NOR :: R R R {
+}
+IMM :: R I {
+}
+RSH :: R R {
+}
+STR :: R R {
+}
+LOD :: R R {
+}
+BGE :: R R R {
+}
+OUT :: O A {
+}
+IN :: R O {
+}

@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-  from urclToISA.operand import Operand
-  from urclToISA.translator import Translation
+  from operand import Operand
+  from translator import Translation
 import copy
 
 class Case():

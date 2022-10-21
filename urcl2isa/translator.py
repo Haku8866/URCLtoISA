@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
-from urclToISA.operand import OpType
-from urclToISA.UTRX import Translation
-from urclToISA.program import Program
-if TYPE_CHECKING: from urclToISA.instruction import Instruction
+from operand import OpType
+from UTRX import Translation
+from program import Program
+if TYPE_CHECKING: from instruction import Instruction
 class Translator():
     def __init__(self, translations: dict[str, Translation]):
         self.translations = translations

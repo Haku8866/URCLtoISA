@@ -1,75 +1,10 @@
-from urclToISA.operand import Operand
-from urclToISA.UTRX import Case
+from operand import Operand
+from UTRX import Case
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from urclToISA.translator import Translation
-from enum import Enum
-from colorama import Fore, Back, Style
+    from translator import Translation
+from colorama import Fore, Style
 import copy
-
-# === Opcodes ===
-opcodes = \
-"""
-ADD
-RSH
-LOD
-STR
-BGE
-NOR
-IMM
-SUB
-JMP
-MOV
-NOP
-LSH
-INC
-DEC
-NEG
-AND
-OR
-NOT
-XNOR
-XOR
-NAND
-BRL
-BRG
-BRE
-BNE
-BOD
-BEV
-BLE
-BRZ
-BNZ
-BRN
-BRP
-PSH
-POP
-CAL
-RET
-HLT
-CPY
-BRC
-BNC
-MLT
-DIV
-MOD
-BSR
-BSL
-SRS
-BSS
-SETE
-SETNE
-SETG
-SETL
-SETGE
-SETLE
-SETC
-SETNC
-LLOD
-LSTR
-IN
-OUT
-""".splitlines()
 
 class Instruction():
     # ======== Static variables ========
@@ -95,13 +30,7 @@ class Instruction():
             if len(words) == 1:
                 return Instruction(labels=labels)
             words.pop()
-        # Attempt to recognise an opcode, if can't then assume NOP
-        opcode = None
-        for opc in opcodes:
-            if opc == words[0]:
-                opcode = opc
-        if not opcode:
-            raise ValueError(f"Cannot parse instruction '{instruction}', unknown opcode.")
+        opcode = words[0]
         if len(words) == 1:
             return Instruction(opcode)
         words = words[1:]

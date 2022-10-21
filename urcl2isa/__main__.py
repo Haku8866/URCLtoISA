@@ -1,24 +1,7 @@
-# ┌───────────────────────────────────────────────────────────────────────────┐
-# │ Usage: Create a folder 'lang' containing your ISA translation file (.utrx)│
-# │        Create a folder 'prog' containing your URCL code file (.urcl)      │
-# │        Run the following command with your chosen file names:             │
-# │ python3 __init__.py -f prog/code.urcl -t lang/isa.utrx                    │
-# |                                                                           |
-# │        Or if you want to convert complex URCL to core or basic URCL:      │
-# | python3 __init__.py -f prog/code.urcl -t urcl/core.utrx                   │
-# |        Or:                                                                |
-# | python3 __init__.py -f prog/code.urcl -t urcl/basic.utrx                  │
-# |        Or:                                                                |
-# | python3 __init__.py -f prog/code.urcl -t urcl/complex.utrx                │
-# └───────────────────────────────────────────────────────────────────────────┘
-# ┌───────────────────────────────────────────────────────────────────────────┐
-# | And of course remember that this is a prototype and is not finished. :)   |
-# └───────────────────────────────────────────────────────────────────────────┘
-
 def main():
-    from urclToISA.program import Program
-    from urclToISA.translator import Translator
-    from urclToISA.isa import Block
+    from program import Program
+    from translator import Translator
+    from isa import Block
     import colorama
     from timeit import default_timer as timer
     import argparse
@@ -40,7 +23,7 @@ def main():
     if argv.Target:
         ISAtranslations = argv.Target
 
-    URCLtranslations = "urclToISA/urcl.utrx"
+    URCLtranslations = "urcl2isa/urcl.utrx"
 
     start = timer()
 

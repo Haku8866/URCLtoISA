@@ -1,0 +1,38 @@
+ADD :: R R R {
+    @A := @B + @C
+}
+
+NOR :: R R R {
+    @A := OR (@B, @C)
+    @A := NOT @A
+}
+
+IMM :: R I {
+    @A := @B
+}
+
+RSH :: R R {
+    @A := @B << 1
+}
+
+STR :: R R {
+    RAM[@A] <- @B
+}
+
+LOD :: R R {
+    @A <- RAM[@B]
+}
+
+BGE :: R R R {
+    IF (@B >= @C)
+        PC := @A
+    ENDIF
+}
+
+OUT :: O A {
+    PRINT @B
+}
+
+IN :: R O {
+    @A := READ
+}
