@@ -2,11 +2,15 @@
 # │ Usage: Create a folder 'lang' containing your ISA translation file (.utrx)│
 # │        Create a folder 'prog' containing your URCL code file (.urcl)      │
 # │        Run the following command with your chosen file names:             │
-# │ python3 run.py -f prog/code.urcl -t lang/isa.utrx                         │
-# │        Or if you want to translate to core URCL use the 'core' ISA:       │
-# | python3 run.py -f prog/code.urcl -t lang/core.utrx                        │
+# │ python3 __init__.py -f prog/code.urcl -t lang/isa.utrx                    │
+# |                                                                           |
+# │        Or if you want to convert complex URCL to core or basic URCL:      │
+# | python3 __init__.py -f prog/code.urcl -t urcl/core.utrx                   │
+# |        Or:                                                                |
+# | python3 __init__.py -f prog/code.urcl -t urcl/basic.utrx                  │
+# |        Or:                                                                |
+# | python3 __init__.py -f prog/code.urcl -t urcl/complex.utrx                │
 # └───────────────────────────────────────────────────────────────────────────┘
-
 # ┌───────────────────────────────────────────────────────────────────────────┐
 # | And of course remember that this is a prototype and is not finished. :)   |
 # └───────────────────────────────────────────────────────────────────────────┘

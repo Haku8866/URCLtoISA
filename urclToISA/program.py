@@ -43,13 +43,13 @@ class Program():
         # First pass update definitions
         for i,ins in enumerate(self.code):
             for l,label in enumerate(ins.labels):
-                labels[label.value] = f"{label.value}_{uid}"
-                self.code[i].labels[l].value = labels[label.value]
+                labels[label] = f"{label}_{uid}"
+                self.code[i].labels[l] = labels[label]
                 uid += 1
         # Second pass update references
         for i,ins in enumerate(self.code):
             for o,opr in enumerate(ins.operands):
-                if opr.type == OpType.LABEL:
+                if opr.type == OpType.LABEL and labels.get(opr.value) is not None:
                     self.code[i].operands[o].value = labels[opr.value]
         return uid
 
@@ -58,8 +58,10 @@ class Program():
         self.replace(program, index)
 
     def replace(self, program, index=-1):
+        labels = self.code[index].labels
         self.code[index:index+1] = program.code
         self.regs = list(set(self.regs + program.regs))
+        self.code[index].labels += labels
 
     def insert(self, program, index=-1):
         self.code[index:index] = program.code

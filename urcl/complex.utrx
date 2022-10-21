@@ -1,0 +1,269 @@
+┌────────────────────────────────────────────────────────────────────┐
+| This is a list of all complex URCL instructions. It isn't          |
+| expected that you write translations for all of these instructions,|
+| but it will improve the efficiency of your ISA code if you do some.|
+| (LLOD and LSTR recommended!)                                       |
+└────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────┐
+| Use this as a target ISA to tidy up URCL code.                     |
+└────────────────────────────────────────────────────────────────────┘
+
+ADD :: R A A {
+    ADD @A @B @C
+}
+
+NOR :: R A A {
+    NOR @A @B @C
+}
+
+IMM :: R I {
+    IMM @A @B
+}
+
+RSH :: R A {
+    RSH @A @B
+}
+
+STR :: A A {
+    STR @A @B
+}
+
+LOD :: R A {
+    LOD @A @B
+}
+
+BGE :: A A A {
+    BGE @A @B @C
+}
+
+OUT :: O A {
+    OUT @A @B
+}
+
+IN :: R O {
+    IN @A @B
+}
+
+SUB :: R A A {
+    SUB @A @B @C
+}
+
+JMP :: A A {
+    JMP @A @B
+}
+
+LSH :: R A {
+    LSH @A @B
+}
+
+INC :: R A {
+    INC @A @B
+}
+
+DEC :: R A {
+    DEC @A @B
+}
+
+NEG :: R A {
+    NEG @A @B
+}
+
+AND :: R A A {
+    AND @A @B @C
+}
+
+OR :: R A A {
+    OR @A @B @C
+}
+
+NOT :: R A {
+    NOT @A @B
+}
+
+XOR :: R A A {
+    XOR @A @B @C
+}
+
+XNOR :: R A A {
+    XNOR @A @B @C
+}
+
+NAND :: R A A {
+    NAND @A @B @C
+}
+
+BRL :: A A A {
+    BRL @A @B @C
+}
+
+BRE :: A A A {
+    BRE @A @B @C
+}
+
+BNE :: A A A {
+    BNE @A @B @C
+}
+
+BOD :: A A A {
+    BOD @A @B @C
+}
+
+BEV :: A A A {
+    BEV @A @B @C
+}
+
+BLE :: A A A {
+    BLE @A @B @C
+}
+
+BRZ :: A A A {
+    BRZ @A @B @C
+}
+
+BNZ :: A A A {
+    BNZ @A @B @C
+}
+
+BRN :: A A A {
+    BRN @A @B @C
+}
+
+BRP :: A A A {
+    BRP @A @B @C
+}
+
+PSH :: A {
+    PSH @A
+}
+
+POP :: R {
+    POP @A
+}
+
+CAL :: A {
+    CAL @A
+}
+
+RET :: {
+    RET
+}
+
+HLT :: {
+    HLT
+}
+
+CPY :: A A {
+    CPY @A @B
+}
+
+BRC :: A A A {
+    BRC @A @B @C
+}
+
+BNC :: A A A {
+    BNC @A @B @C
+}
+
+LLOD :: R A A {
+    LLOD @A @B @C
+}
+
+LSTR :: A A A {
+    LSTR @A @B @C
+}
+
+MLT :: R A A {
+    MLT @A @B @C
+}
+
+DIV :: R A A {
+    DIV @A @B @C
+}
+
+SDIV :: R A A {
+    SDIV @A @B @C
+}
+
+MOD :: R A A {
+    MOD @A @B @C
+}
+
+BSR :: R A A {
+    BSR @A @B @C
+}
+
+BSL :: R A A {
+    BSL @A @B @C
+}
+
+SRS :: R A {
+    SRS @A @B
+}
+
+BSS :: R A A {
+    BSS @A @B @C
+}
+
+SBRL :: A A A {
+    SBRL @A @B @C
+}
+
+SBRG :: A A A {
+    SBRG @A @B @C
+}
+
+SBLE :: A A A {
+    SBLE @A @B @C
+}
+
+SBGE :: A A A {
+    SBGE @A @B @C
+}
+
+SETE :: R A A {
+    SETE @A @B @C
+}
+
+SETNE :: R A A {
+    SETNE @A @B @C
+}
+
+SETG :: R A A {
+    SETG @A @B @C
+}
+
+SETL :: R A A {
+    SETL @A @B @C
+}
+
+SETGE :: R A A {
+    SETGE @A @B @C
+}
+
+SETLE :: R A A {
+    SETLE @A @B @C
+}
+
+SETC :: R A A {
+    SETC @A @B @C
+}
+
+SETNC :: R A A {
+    SETNC @A @B @C
+}
+
+SSETG :: R A A {
+    SSETG @A @B @C
+}
+
+SSETL :: R A A {
+    SSETL @A @B @C
+}
+
+SSETGE :: R A A {
+    SSETGE @A @B @C
+}
+
+SSETLE :: R A A {
+    SSETLE @A @B @C
+}

@@ -22,6 +22,9 @@ NOT :: R A {
 INC :: R A {
     ADD @A @B 1
 }
+DEC :: R A {
+    SUB @A @B 1
+}
 SUB :: R A == A {
     IMM @A 0
 }
@@ -45,16 +48,20 @@ MOV :: R R {
 DEC :: R R {
     SUB @A @B 1
 }
-BNZ :: A R {
+BNZ :: A A {
     BGE ~+2 @B 1
     JMP @A 
 }
-
+BGE :: I R A {
+    IMM R1 @A
+    BGE R1 @B @C
+}
 MLT :: R A <> Z {
     IMM @A 0
 }
 MLT :: R A A {
     MOV @A @B
+    .loop
     DEC @C @C
-    BNZ ~-1 @C
+    BNZ .loop @C
 }

@@ -91,10 +91,10 @@ class Instruction():
         # Collect any labels
         labels: list["Operand"] = []
         while words[0][0] == ".":
-            labels.append(Operand.parse(words[0]))
+            labels.append(words[0])
             if len(words) == 1:
                 return Instruction(labels=labels)
-            words = words[1:]
+            words.pop()
         # Attempt to recognise an opcode, if can't then assume NOP
         opcode = None
         for opc in opcodes:

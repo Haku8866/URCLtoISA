@@ -1,0 +1,163 @@
+┌──────────────────────────────────────────────────────────────────┐
+| Like core.utrx, this is a list of translations for all basic URCL|
+| instructions. To run URCL well, it is recommended that you write |
+| translations for all, or most, of these instructions.            |
+└──────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+| Use this as a target ISA to simplify URCL to basic URCL.         |
+└──────────────────────────────────────────────────────────────────┘
+ADD :: R A A {
+    ADD @A @B @C
+}
+
+NOR :: R A A {
+    NOR @A @B @C
+}
+
+IMM :: R I {
+    IMM @A @B
+}
+
+RSH :: R A {
+    RSH @A @B
+}
+
+STR :: A A {
+    STR @A @B
+}
+
+LOD :: R A {
+    LOD @A @B
+}
+
+BGE :: A A A {
+    BGE @A @B @C
+}
+
+OUT :: O A {
+    OUT @A @B
+}
+
+IN :: R O {
+    IN @A @B
+}
+
+SUB :: R A A {
+    SUB @A @B @C
+}
+
+JMP :: A A {
+    JMP @A @B
+}
+
+LSH :: R A {
+    LSH @A @B
+}
+
+INC :: R A {
+    INC @A @B
+}
+
+DEC :: R A {
+    DEC @A @B
+}
+
+NEG :: R A {
+    NEG @A @B
+}
+
+AND :: R A A {
+    AND @A @B @C
+}
+
+OR :: R A A {
+    OR @A @B @C
+}
+
+NOT :: R A {
+    NOT @A @B
+}
+
+XOR :: R A A {
+    XOR @A @B @C
+}
+
+XNOR :: R A A {
+    XNOR @A @B @C
+}
+
+NAND :: R A A {
+    NAND @A @B @C
+}
+
+BRL :: A A A {
+    BRL @A @B @C
+}
+
+BRE :: A A A {
+    BRE @A @B @C
+}
+
+BNE :: A A A {
+    BNE @A @B @C
+}
+
+BOD :: A A A {
+    BOD @A @B @C
+}
+
+BEV :: A A A {
+    BEV @A @B @C
+}
+
+BLE :: A A A {
+    BLE @A @B @C
+}
+
+BRZ :: A A A {
+    BRZ @A @B @C
+}
+
+BNZ :: A A A {
+    BNZ @A @B @C
+}
+
+BRN :: A A A {
+    BRN @A @B @C
+}
+
+BRP :: A A A {
+    BRP @A @B @C
+}
+
+PSH :: A {
+    PSH @A
+}
+
+POP :: R {
+    POP @A
+}
+
+CAL :: A {
+    CAL @A
+}
+
+RET :: {
+    RET
+}
+
+HLT :: {
+    HLT
+}
+
+CPY :: A A {
+    CPY @A @B
+}
+
+BRC :: A A A {
+    BRC @A @B @C
+}
+
+BNC :: A A A {
+    BNC @A @B @C
+}
