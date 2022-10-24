@@ -2,6 +2,7 @@ from operand import Operand, OpType
 from instruction import Instruction
 from enum import Enum
 from colorama import init
+from copy import deepcopy
 
 init(autoreset=True)
 
@@ -24,15 +25,16 @@ class Program():
         self.uid: int = 0
 
     def makeRegsNumeric(self):
-        self.regs = []
+        regList = []
         for i,ins in enumerate(self.code):
             for o,opr in enumerate(ins.operands):
                 if opr.type == OpType.REGISTER and opr.value != "0":
-                    if opr.value not in self.regs:
-                        self.regs.append(opr.value)
-                    self.code[i].operands[o].value = str(1+self.regs.index(opr.value))
-        for r,reg in enumerate(self.regs):
-            self.regs[r] = str(r+1)
+                    if opr.value not in regList:
+                        regList.append(opr.value)
+                    self.code[i].operands[o].value = str(1+regList.index(opr.value))
+        for r,reg in enumerate(regList):
+            regList[r] = str(r+1)
+        self.regs = regList
 
     def primeRegs(self):
         for r,reg in enumerate(self.regs):
@@ -60,11 +62,12 @@ class Program():
         self.uid = program.uniqueLabels(self.uid)
         self.replace(program, index)
 
-    def replace(self, program, index=-1):
+    def replace(self, program, index=-1, limit=4):
+        program = Program.useLessRegisters(self, program)
         labels = self.code[index].labels
         self.code[index:index+1] = program.code
         self.regs = list(set(self.regs + program.regs))
-        self.code[index].labels += labels
+        self.code[index].labels += labels            
 
     def insert(self, program, index=-1):
         self.code[index:index] = program.code
@@ -83,7 +86,7 @@ class Program():
             for o,opr in enumerate(ins.operands):
                 if opr.type == OpType.OTHER:
                     if opr.value.isalpha() and len(opr.value) == 1:
-                        self.code[i].operands[o] = opr.extra[opr.value]
+                        self.code[i].operands[o] = deepcopy(opr.extra[opr.value])
 
     def relativesToLabels(self):
         for i,ins in enumerate(self.code):
@@ -129,6 +132,22 @@ class Program():
         self.code = list(filter(lambda i: i.opcode != "NOP", self.code))
 
     @staticmethod
+    def useLessRegisters(mainProg: "Program", insert: "Program", amount=4):
+        totalregs = list(set(mainProg.regs + insert.regs))
+        if len(totalregs) > amount:
+            head = []
+            tail = []
+            reuse = mainProg.regs[:len(totalregs)-amount]
+            for r,reg in enumerate(reuse):
+                head.append(Instruction("PSH", [Operand(OpType.REGISTER, value=reg)]))
+                tail[0:0] = [Instruction("POP", [Operand(OpType.REGISTER, value=reg)])]
+                insert.rename(totalregs[-1], reg)
+                totalregs.remove(totalregs[-1])
+            insert.code[0:0] = head
+            insert.code += tail
+        return insert
+
+    @staticmethod
     # The program is a list of strings
     def parse(program: list[str], wordSize: int=8):
         headers: dict[int, str] = {}
@@ -170,7 +189,7 @@ class Program():
                     code = code[:-1]
             for o,operand in enumerate(ins.operands):
                 if operand.type == OpType.REGISTER:
-                    if operand.value not in regs:
+                    if operand.value not in regs and operand.value != "0":
                         regs.append(operand.value)
                 if operand.type == OpType.OTHER:
                     v = operand.value

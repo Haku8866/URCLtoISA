@@ -40,14 +40,15 @@ def main():
         while not done:
             done = True
             for l,ins in enumerate(program.code):
-                if superTrans.substitute(ins) is not None:
-                    continue
+                if superTrans is not None:
+                    if superTrans.substitute(ins) is not None:
+                        continue
                 sub: Program = trans.substituteURCL(ins)
                 if sub is not None:
                     while len(set(sub.regs + program.regs)) != len(sub.regs + program.regs):
                         sub.primeRegs()
                     sub.unpackPlaceholders()
-                    sub = translate(sub, trans)
+                    sub = translate(sub, trans, superTrans)
                     program.insertSub(sub, l)
                     done = False
                     break
@@ -81,7 +82,7 @@ def main():
             print(main.toColour(indent=20))
         print(f"-"*30)
         print(f"In {end-start:.10f} seconds.")
-        print(f"Registers used: {len(main.regs)}")
+        print(f"Registers used ({len(main.regs)}): {main.regs}")
         print(f"-"*30)
 
     start = timer()

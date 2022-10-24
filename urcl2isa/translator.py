@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 from operand import OpType
 from UTRX import Translation
 from program import Program
+from copy import deepcopy
 if TYPE_CHECKING: from instruction import Instruction
 class Translator():
     def __init__(self, translations: dict[str, Translation]):

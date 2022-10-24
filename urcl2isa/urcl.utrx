@@ -182,17 +182,17 @@ BEV :: A A {
 BLE :: A A A {
     BGE @A @C @B
 }
-BRZ :: A A A {
+BRZ :: A A {
     BGE ~+2 @B 1
     JMP @A
 }
-BNZ :: A A A {
+BNZ :: A A {
     BGE @A @B 1
 }
-BRN :: A A A {
+BRN :: A A {
     BGE @A @B @MSB
 }
-BRP :: A A A {
+BRP :: A A {
     BGE ~+2 @B @MSB
     JMP @A
 }

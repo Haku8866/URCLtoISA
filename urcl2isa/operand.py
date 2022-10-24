@@ -66,6 +66,7 @@ class Operand():
     def parse(operand: str):
         # Get the operand type
         typ = Operand.reverse_prefixes.get(operand[0])
+        opr = operand
         if typ is None:
             for sp_type in Operand.special_types:
                 try:

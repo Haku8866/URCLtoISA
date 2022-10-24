@@ -82,7 +82,7 @@ class Instruction():
 
     def toString(self, indent=0):
         out = "" if not self.labels else f"{' '.join(self.labels):>{indent}} "
-        out += f"{self.opcode}" + " ".join(op.toString() for op in self.operands)
+        out += f"{self.opcode} " + " ".join(op.toString() for op in self.operands)
         return out
 
     def toColour(self, indent=0):

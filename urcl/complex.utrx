@@ -124,20 +124,20 @@ BLE :: A A A {
     BLE @A @B @C
 }
 
-BRZ :: A A A {
-    BRZ @A @B @C
+BRZ :: A A {
+    BRZ @A @B
 }
 
-BNZ :: A A A {
-    BNZ @A @B @C
+BNZ :: A A {
+    BNZ @A @B
 }
 
-BRN :: A A A {
-    BRN @A @B @C
+BRN :: A A {
+    BRN @A @B
 }
 
-BRP :: A A A {
-    BRP @A @B @C
+BRP :: A A {
+    BRP @A @B
 }
 
 PSH :: A {
