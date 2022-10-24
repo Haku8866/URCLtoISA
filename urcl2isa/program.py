@@ -135,7 +135,8 @@ class Program():
         code: list[Instruction] = []
         regs: list[str] = []
         skip = False
-        for line in program:
+
+        for l,line in enumerate(program):
             if "*/" in line:
                 skip = False
                 continue
@@ -147,6 +148,14 @@ class Program():
             while "  " in line:
                 line = line.replace("  "," ")
             line = line.split("//")[0]
+            ls = line.split()
+            if len(ls) == 3:
+                if ls[0] == "@DEFINE":
+                    old, new = ls[1:]
+                    for s,subline in enumerate(program[l:]):
+                        program[l+s] = subline.replace(f"{old}", f"{new}")
+                    continue
+
             header = Program.parseHeader(line)
             if header is not None:
                 headers[header[0]] = header[1]
