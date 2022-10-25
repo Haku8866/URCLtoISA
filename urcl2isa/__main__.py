@@ -1,6 +1,7 @@
 def main():
     from program import Program
     from translator import Translator
+    from operand import OpType
     from isa import Block
     import colorama
     from timeit import default_timer as timer
@@ -28,31 +29,14 @@ def main():
         wordSize = int(argv.WordSize)
 
     URCLtranslations = "urcl2isa/urcl.utrx"
+    URCLoptimisations = "urcl2isa/optimise.utrx"
 
     start = timer()
 
     main = Program.parseFile(filename)
     translator = Translator.fromFile(URCLtranslations)
     translatorISA = Translator.fromFile(ISAtranslations)
-
-    def translate(program: Program, trans: Translator, superTrans: Translator=None):
-        done = False
-        while not done:
-            done = True
-            for l,ins in enumerate(program.code):
-                if superTrans is not None:
-                    if superTrans.substitute(ins) is not None:
-                        continue
-                sub: Program = trans.substituteURCL(ins)
-                if sub is not None:
-                    while len(set(sub.regs + program.regs)) != len(sub.regs + program.regs):
-                        sub.primeRegs()
-                    sub.unpackPlaceholders()
-                    sub = translate(sub, trans, superTrans)
-                    program.insertSub(sub, l)
-                    done = False
-                    break
-        return program
+    optimisations = Translator.fromFile(URCLoptimisations)
 
     def translateISA(program: Program, trans: Translator):
         out: list[Block] = []
@@ -64,11 +48,12 @@ def main():
             out.append(Block(ins.labels, sub))
         return out
 
-
+    regLimit = len(main.regs)
     main.removeDW()
-    main = translate(main, translator, translatorISA)
+    main.translate(translator, translatorISA, regLimit)
     main.makeRegsNumeric()
     main.relativesToLabels()
+    main.optimise(optimisations, limit=regLimit)
 
     end = timer()
 

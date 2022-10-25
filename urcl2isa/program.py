@@ -58,12 +58,12 @@ class Program():
                     self.code[i].operands[o].value = labels[opr.value]
         return uid
 
-    def insertSub(self, program, index=-1):
+    def insertSub(self, program, index=-1, limit=128):
         self.uid = program.uniqueLabels(self.uid)
-        self.replace(program, index)
+        self.replace(program, index, limit)
 
-    def replace(self, program, index=-1, limit=4):
-        program = Program.useLessRegisters(self, program)
+    def replace(self, program, index=-1, limit=128):
+        program = Program.useLessRegisters(self, program, limit)
         labels = self.code[index].labels
         self.code[index:index+1] = program.code
         self.regs = list(set(self.regs + program.regs))
@@ -126,13 +126,33 @@ class Program():
                 if opr.type == OpType.LABEL and labelDict.get(opr.value) is not None:
                     self.code[i].operands[o].type = OpType.ADDRESS
                     self.code[i].operands[o].value = labelDict[opr.value]
-        self.removeNOP()
+        self.optimise()
 
-    def removeNOP(self):
+    def translate(self, trans, superTrans=None, limit=128):
+        done = False
+        while not done:
+            done = True
+            for l,ins in enumerate(self.code):
+                if superTrans is not None:
+                    if superTrans.substitute(ins) is not None:
+                        continue
+                sub: Program = trans.substituteURCL(ins)
+                if sub is not None:
+                    while len(set(sub.regs + self.regs)) != len(sub.regs + self.regs):
+                        sub.primeRegs()
+                    sub.unpackPlaceholders()
+                    sub.translate(trans, superTrans)
+                    self.insertSub(sub, l, limit)
+                    done = False
+                    break
+
+    def optimise(self, optimisations=None, limit=128):
+        if optimisations is not None:
+            self.translate(optimisations, limit=limit)
         self.code = list(filter(lambda i: i.opcode != "NOP", self.code))
 
     @staticmethod
-    def useLessRegisters(mainProg: "Program", insert: "Program", amount=4):
+    def useLessRegisters(mainProg: "Program", insert: "Program", amount=128):
         totalregs = list(set(mainProg.regs + insert.regs))
         if len(totalregs) > amount:
             head = []
@@ -141,8 +161,10 @@ class Program():
             for r,reg in enumerate(reuse):
                 head.append(Instruction("PSH", [Operand(OpType.REGISTER, value=reg)]))
                 tail[0:0] = [Instruction("POP", [Operand(OpType.REGISTER, value=reg)])]
-                insert.rename(totalregs[-1], reg)
-                totalregs.remove(totalregs[-1])
+                old = insert.regs[-1]
+                insert.rename(old, reg)
+                insert.regs = [reg] + insert.regs[:-1]
+                totalregs.remove(old)
             insert.code[0:0] = head
             insert.code += tail
         return insert

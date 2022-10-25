@@ -66,9 +66,6 @@ OUT :: O I {
 | Basic instructions.                                              |
 └──────────────────────────────────────────────────────────────────┘
 
-SUB :: R A == A {
-    IMM @A 0
-}
 SUB :: R != A A {
     NOR @A @C R0
     ADD @A @A @B

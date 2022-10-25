@@ -1,0 +1,6 @@
+MOV :: A == A {
+    NOP
+}
+SUB :: R A == A {
+    IMM @A 0
+}
