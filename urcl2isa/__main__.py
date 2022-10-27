@@ -35,13 +35,15 @@ def main():
     translator = Translator.fromFile(URCLtranslations)
     translatorISA = Translator.fromFile(ISAtranslations)
 
-    def translate(program: Program, trans: Translator):
+    def translate(program: Program, trans: Translator, superTrans: Translator=None):
         done = False
         while not done:
             done = True
             for l,ins in enumerate(program.code):
-                sub = trans.substituteURCL(ins)
-                if sub != "":
+                if superTrans.substitute(ins) is not None:
+                    continue
+                sub: Program = trans.substituteURCL(ins)
+                if sub is not None:
                     while len(set(sub.regs + program.regs)) != len(sub.regs + program.regs):
                         sub.primeRegs()
                     sub.unpackPlaceholders()
@@ -54,11 +56,16 @@ def main():
     def translateISA(program: Program, trans: Translator):
         out: list[Block] = []
         for l,ins in enumerate(program.code):
-            out.append(Block(ins.labels, trans.substitute(ins)))
+            sub: list[str] = trans.substitute(ins)
+            if sub is None:
+                print(f"*** Warning: No translation for: {ins.toString()} ***")
+                sub = []
+            out.append(Block(ins.labels, sub))
         return out
 
-    main = translate(main, translator)
 
+    main.removeDW()
+    main = translate(main, translator, translatorISA)
     main.makeRegsNumeric()
     main.relativesToLabels()
 

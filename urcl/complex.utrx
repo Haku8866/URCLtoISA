@@ -48,8 +48,8 @@ SUB :: R A A {
     SUB @A @B @C
 }
 
-JMP :: A A {
-    JMP @A @B
+JMP :: A {
+    JMP @A
 }
 
 MOV :: A A {

@@ -10,7 +10,7 @@ class Instruction():
     # ======== Static variables ========
     # There are none
 
-    def __init__(self, opcode="NOP", operands:list["Operand"]=[], labels:list["Operand"]=[]):
+    def __init__(self, opcode="NOP", operands:list["Operand"]=[], labels:list[str]=[]):
         # A unique ID to differentiate instructions with identical attribute values
         self.opcode = opcode
         self.operands = operands
@@ -24,7 +24,7 @@ class Instruction():
         if len(words) == 0:
             return None
         # Collect any labels
-        labels: list["Operand"] = []
+        labels: list[str] = []
         while words[0][0] == ".":
             labels.append(words[0])
             if len(words) == 1:

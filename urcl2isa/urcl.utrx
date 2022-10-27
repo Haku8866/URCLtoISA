@@ -85,7 +85,7 @@ SUB :: R A A {
     ADD @A @B R1
     INC @A @A
 }
-JMP :: A A {
+JMP :: A {
     BGE @A R0 R0
 }
 MOV :: A A {

@@ -10,10 +10,10 @@ class Translator():
     def substitute(self, ins: "Instruction"):
         translation = self.translations.get(ins.opcode)
         if translation is None:
-            return ""
+            return None
         body = ins.match(translation)
         if body is None:
-            return ""
+            return None
         for l,line in enumerate(body):
             for i in range(len(ins.operands)):
                 body[l] = body[l].replace(f"@{chr(65+i)}", ins.operands[i].toString())
@@ -22,10 +22,10 @@ class Translator():
     def substituteURCL(self, ins: "Instruction", wordSize: int=8):
         translation = self.translations.get(ins.opcode)
         if translation is None:
-            return ""
+            return None
         body = ins.match(translation)
         if body is None:
-            return ""
+            return None
         sub = Program.parse(body, wordSize)
         for i,instr in enumerate(sub.code):
             for o,opr in enumerate(instr.operands):

@@ -93,6 +93,41 @@ class Program():
                     self.code[i].operands[o] = Operand.parse(f".{ins.opcode}_{self.uid}")
                     self.uid += 1
 
+    def removeDW(self):
+        count = 0
+        # Find out how much memory is going to be required
+        for ins in self.code:
+            if ins.opcode == "DW":
+                count += 1
+        # Free up the required memory slots
+        for i, ins in enumerate(self.code):
+            for o, opr in enumerate(ins.operands):
+                if opr.type == OpType.ADDRESS:
+                    self.code[i].operands[o].value += count
+        # Move the values in 'DW's to memory with 'STR's
+        insert = []
+        count = 0
+        labelDict = {}
+        for i, ins in enumerate(self.code):
+            if ins.opcode == "DW":
+                for lbl in ins.labels:
+                    labelDict[lbl[1:]] = count
+                opr = ins.operands[0]
+                insert.append(f"STR #{count} {opr.toString()}")
+                count += 1
+                self.code[i] = Instruction()
+        insert = Program.parse(insert)
+        self.code[0:0] = insert.code
+        for i, ins in enumerate(self.code):
+            for o, opr in enumerate(self.code[i].operands):
+                if opr.type == OpType.LABEL and labelDict.get(opr.value) is not None:
+                    self.code[i].operands[o].type = OpType.ADDRESS
+                    self.code[i].operands[o].value = labelDict[opr.value]
+        self.removeNOP()
+
+    def removeNOP(self):
+        self.code = list(filter(lambda i: i.opcode != "NOP", self.code))
+
     @staticmethod
     # The program is a list of strings
     def parse(program: list[str], wordSize: int=8):
