@@ -29,7 +29,7 @@ class Instruction():
             labels.append(words[0])
             if len(words) == 1:
                 return Instruction(labels=labels)
-            words.pop()
+            words.pop(0)
         opcode = words[0]
         if len(words) == 1:
             return Instruction(opcode)
