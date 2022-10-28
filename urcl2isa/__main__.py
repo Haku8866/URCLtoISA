@@ -1,7 +1,7 @@
 def main():
     from program import Program
     from translator import Translator
-    from operand import OpType
+    from instruction import Instruction
     from isa import Block
     import colorama
     from timeit import default_timer as timer
@@ -21,15 +21,16 @@ def main():
     filename = "mycode.urcl"
     if argv.File:
         filename = argv.File
-    ISAtranslations = "core.utrx"
+    ISAtranslations = "urcl/complex.utrx"
     if argv.Target:
         ISAtranslations = argv.Target
     wordSize = 8
     if argv.WordSize:
         wordSize = int(argv.WordSize)
 
-    URCLtranslations = "urcl2isa/urcl.utrx"
-    URCLoptimisations = "urcl2isa/optimise.utrx"
+    URCLtranslations = "urcl2isa/instructions/urcl.utrx"
+    URCLoptimisations = "urcl2isa/instructions/optimise.utrx"
+    URCLextra = "urcl2isa/instructions/custom.utrx"
 
     start = timer()
 
@@ -37,6 +38,8 @@ def main():
     translator = Translator.fromFile(URCLtranslations)
     translatorISA = Translator.fromFile(ISAtranslations)
     optimisations = Translator.fromFile(URCLoptimisations)
+    extra = Translator.fromFile(URCLextra)
+    translator.merge(extra)
 
     def translateISA(program: Program, trans: Translator):
         out: list[Block] = []
@@ -49,10 +52,14 @@ def main():
         return out
 
     regLimit = len(main.regs)
-    main.removeDW()
+    rmDW = (translatorISA.substitute(Instruction.parse("DW 0")) is None)
+    if rmDW:
+        main.removeDW()
     main.translate(translator, translatorISA, regLimit)
     main.makeRegsNumeric()
     main.relativesToLabels()
+    if rmDW:
+        main.removeDW()
     main.optimise(optimisations, limit=regLimit)
 
     end = timer()
@@ -86,8 +93,14 @@ def main():
 
     if argv.Output:
         with open(argv.Output, "w+") as f:
-            for block in out:
-                f.write(block.toString() + "\n")
+            if ISAtranslations not in ["urcl/core.utrx", "urcl/basic.utrx", "urcl/complex.utrx"]:
+                for block in out:
+                    f.write(block.toString() + "\n")
+            else:
+                for block in out:
+                    lines = block.URCL_labels + block.code
+                    for l in lines:
+                        f.write(l + "\n")
 
 if __name__ == "__main__":
     main()

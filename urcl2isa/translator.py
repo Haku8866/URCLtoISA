@@ -36,6 +36,16 @@ class Translator():
                         opr.extra[opr.value] = placeholder
         return sub
 
+    def merge(self, new: "Translator", important=False):
+        for k in new.translations:
+            if self.translations.get(k) is None:
+                self.translations[k] = new.translations[k]
+            elif not important:
+                self.translations[k].cases += new.translations[k].cases
+            else:
+                self.translations[k].cases[0:0] = new.translations[k].cases
+        return
+
     @staticmethod
     def fromFile(filename):
         translations = Translation.parseFile(filename)

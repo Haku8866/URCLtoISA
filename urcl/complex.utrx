@@ -275,3 +275,7 @@ SSETGE :: R A A {
 SSETLE :: R A A {
     SSETLE @A @B @C
 }
+
+DW :: I {
+    DW @A
+}

@@ -1,0 +1,17 @@
+┌──────────────────────────────────────────────────────────────────┐
+| A space for you to define your own URCL instructions.            |
+|                                                                  |
+| An example is given here, try using it in a URCL program!        |
+| (Notice that it takes no arguments, just like HLT or RET)        |
+└──────────────────────────────────────────────────────────────────┘
+
+HAKU :: {
+    .h
+    DW 'H'
+    .a
+    DW 'A'
+    .k
+    DW 'K'
+    .u
+    DW 'U'
+}

@@ -49,6 +49,7 @@ class Operand():
         (lambda a: a[0].upper() == "R",                       OpType.REGISTER, lambda a:a[1:]),
         (lambda a: a == "SP",                                 OpType.STACKPTR, lambda :"SP"),
         (lambda a: a[0] == "+",                               OpType.NEGATIVE, lambda a: f"-{a}"),
+        (lambda a: a[-1] == "'",                              OpType.NUMBER,   lambda a: str(ord(a[1:-1])))
     ]
 
     def __init__(self, type=OpType.NUMBER, value="", word=0, extra:dict[str]={}):

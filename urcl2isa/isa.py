@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 from operand import Operand 
 
 class Block():
-    def __init__(self, URCL_labels:list[Operand]=[], code:list[str]=[]):
+    def __init__(self, URCL_labels:list[str]=[], code:list[str]=[]):
         self.URCL_labels = URCL_labels
         self.code = code
     
