@@ -149,10 +149,65 @@ class Program():
     def optimise(self, optimisations=None, limit=128):
         if optimisations is not None:
             self.translate(optimisations, limit=limit)
+        for i, ins in enumerate(self.code):
+            if i > 0:
+                prins = self.code[i-1]
+                if prins.opcode in ("PSH", "POP") and \
+                   ins.opcode in ("PSH", "POP") and \
+                   prins.opcode != ins.opcode and \
+                   prins.operands[0].equals(ins.operands[0]):
+                    self.code[i-1].opcode = "NOP"
+                    self.code[i].opcode = "NOP"
+
         self.code = list(filter(lambda i: i.opcode != "NOP", self.code))
+
+    def foldRegisters(self, amount):
+        self.makeRegsNumeric()
+        if len(self.regs) <= amount: return
+        for r in range(amount, len(self.regs)):
+            self.code[0:0] = [Instruction.parse(f".R{r+1} DW 0")]
+        done = False
+        while not done:
+            done = True
+            for i, ins in enumerate(self.code):
+                used = []
+                for o, opr in enumerate(ins.operands):
+                    if opr.type == OpType.REGISTER and int(opr.value) <= amount:
+                        used.append(int(opr.value))
+                a = set(self.regs[:amount+1]).difference(used)
+                head = []
+                tail = []
+                subbed = {}
+                for o, opr in enumerate(ins.operands):
+                    if opr.type == OpType.REGISTER and subbed.get(int(opr.value)) is not None:
+                        self.code[i].operands[o].value = subbed[int(opr.value)]
+                        continue
+                    if opr.type == OpType.REGISTER and int(opr.value) > amount:
+                        done = False
+                        r = a.pop()
+                        subbed[int(opr.value)] = r
+                        head += [Instruction.parse(x) for x in [
+                            f"PSH R{r}",
+                            f"LOD R{r} .R{opr.value}",
+                        ]]
+                        tail += [Instruction.parse(x) for x in [
+                            f"STR .R{opr.value} R{r}",
+                            f"POP R{r}"
+                        ]]
+                        self.code[i].operands[o].value = f"{r}"
+                if not done:
+                    self.code[i+1:i+1] = tail
+                    lab = ins.labels
+                    self.code[i].labels = []
+                    self.code[i:i] = head
+                    self.code[i].labels = lab
+                    break
 
     @staticmethod
     def useLessRegisters(mainProg: "Program", insert: "Program", amount=128):
+        """ This is for when you are merging a subprogram into a main program.
+            This is not to simply reduce the number of registers used in a
+            standalone program. """
         totalregs = list(set(mainProg.regs + insert.regs))
         if len(totalregs) > amount:
             head = []

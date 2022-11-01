@@ -14,6 +14,7 @@ def main():
     p.add_argument("-s", "--Silent", help="Hide terminal output")
     p.add_argument("-b", "--Boring", help="Give uncoloured output")
     p.add_argument("-w", "--WordSize", help="The size of a word")
+    p.add_argument("-r", "--Minreg", help="Set the MINREG of the output")
 
     argv = p.parse_args()
 
@@ -35,6 +36,11 @@ def main():
     start = timer()
 
     main = Program.parseFile(filename)
+
+    minreg = len(main.regs)
+    if argv.Minreg:
+        minreg = int(argv.Minreg)
+
     translator = Translator.fromFile(URCLtranslations)
     translatorISA = Translator.fromFile(ISAtranslations)
     optimisations = Translator.fromFile(URCLoptimisations)
@@ -51,16 +57,16 @@ def main():
             out.append(Block(ins.labels, sub))
         return out
 
-    regLimit = len(main.regs)
+    main.foldRegisters(minreg)
     rmDW = (translatorISA.substitute(Instruction.parse("DW 0")) is None)
     if rmDW:
         main.removeDW()
-    main.translate(translator, translatorISA, regLimit)
+    main.translate(translator, translatorISA, minreg)
     main.makeRegsNumeric()
     main.relativesToLabels()
     if rmDW:
         main.removeDW()
-    main.optimise(optimisations, limit=regLimit)
+    main.optimise(optimisations, limit=minreg)
 
     end = timer()
 

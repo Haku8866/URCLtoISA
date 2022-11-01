@@ -62,6 +62,10 @@ class Operand():
         self.extra = extra
         self.setTypeclass()
 
+    def equals(self, other: "Operand"):
+        return (self.type == other.type and self.value == other.value)
+
+
     # ======== Static methods ========
     @staticmethod
     def parse(operand: str):
