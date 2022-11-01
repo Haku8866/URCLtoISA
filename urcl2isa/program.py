@@ -149,17 +149,28 @@ class Program():
     def optimise(self, optimisations=None, limit=128):
         if optimisations is not None:
             self.translate(optimisations, limit=limit)
-        for i, ins in enumerate(self.code):
-            if i > 0:
-                prins = self.code[i-1]
-                if prins.opcode in ("PSH", "POP") and \
-                   ins.opcode in ("PSH", "POP") and \
-                   prins.opcode != ins.opcode and \
-                   prins.operands[0].equals(ins.operands[0]):
-                    self.code[i-1].opcode = "NOP"
-                    self.code[i].opcode = "NOP"
-
-        self.code = list(filter(lambda i: i.opcode != "NOP", self.code))
+        done = False
+        while not done:
+            done = True
+            for i, ins in enumerate(self.code):
+                if i > 0:
+                    prins = self.code[i-1]
+                    if prins.opcode in ("PSH", "POP") and \
+                    ins.opcode in ("PSH", "POP") and \
+                    prins.opcode != ins.opcode and \
+                    prins.operands[0].equals(ins.operands[0]):
+                        self.code[i-1].opcode = "NOP"
+                        self.code[i].opcode = "NOP"
+                        done = False
+                    if prins.opcode in ("STR", "LOD") and \
+                    ins.opcode in ("STR", "LOD") and \
+                    prins.opcode != ins.opcode and \
+                    prins.operands[0].equals(ins.operands[1]) and \
+                    prins.operands[1].equals(ins.operands[0]):
+                        self.code[i-1].opcode = "NOP"
+                        self.code[i].opcode = "NOP"
+                        done = False
+            self.code = list(filter(lambda i: i.opcode != "NOP", self.code))
 
     def foldRegisters(self, amount):
         self.makeRegsNumeric()
@@ -171,10 +182,15 @@ class Program():
             done = True
             for i, ins in enumerate(self.code):
                 used = []
+                work = False
                 for o, opr in enumerate(ins.operands):
                     if opr.type == OpType.REGISTER and int(opr.value) <= amount:
-                        used.append(int(opr.value))
-                a = set(self.regs[:amount+1]).difference(used)
+                        used.append(opr.value)
+                    elif opr.type == OpType.REGISTER and int(opr.value) > amount:
+                        work = True
+                if not work: continue
+                a = list(set(self.regs[:amount]).difference(used))
+                a.sort()
                 head = []
                 tail = []
                 subbed = {}
@@ -184,7 +200,21 @@ class Program():
                         continue
                     if opr.type == OpType.REGISTER and int(opr.value) > amount:
                         done = False
-                        r = a.pop()
+                        furthest = (-1, "")
+                        for reg in a:
+                            found = False
+                            for x, subins in enumerate(self.code[i:]):
+                                if found: break
+                                for y in subins.operands:
+                                    if y.type == OpType.REGISTER and y.value == reg:
+                                        if x > furthest[0]:
+                                            furthest = (i, reg)
+                                            found = True
+                                        break
+                            if not found:
+                                furthest = (i, reg)
+                                break
+                        r = furthest[1]
                         subbed[int(opr.value)] = r
                         head += [Instruction.parse(x) for x in [
                             f"PSH R{r}",
