@@ -1,0 +1,10 @@
+BITS >= 4
+MINHEAP 4
+MINREG 4
+
+@PRAGMA DuplicateDefines silent ignore
+
+@DEFINE TestDefine 0x2A03
+LOD $0 TestDefine
+@INCLUDE prog/testinclude.urcl
+STR TestDefine $0
