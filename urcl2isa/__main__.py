@@ -43,17 +43,24 @@ def main():
 
     translator = Translator.fromFile(URCLtranslations)
     translatorISA = Translator.fromFile(ISAtranslations)
+    if translatorISA.bits > 0:
+        wordSize = translatorISA.bits
     optimisations = Translator.fromFile(URCLoptimisations)
     extra = Translator.fromFile(URCLextra)
     translator.merge(extra)
 
     def translateISA(program: Program, trans: Translator):
         out: list[Block] = []
-        for l,ins in enumerate(program.code):
+        for i,ins in enumerate(program.code):
             sub: list[str] = trans.substitute(ins)
             if sub is None:
                 print(f"*** Warning: No translation for: {ins.toString()} ***")
                 sub = []
+            else:
+                for l, line in enumerate(sub):
+                    for old in trans.mappings:
+                        new = trans.mappings[old]
+                        sub[l] = line.replace(old, new)
             out.append(Block(ins.labels, sub))
         return out
 
@@ -69,33 +76,35 @@ def main():
     main.optimise(optimisations, limit=minreg)
 
     end = timer()
-
+    txturcl = f"{filename} translated to {URCLtranslations}"
+    txtisa = f"{filename} translated to {ISAtranslations}"
+    size = max(len(txturcl), len(txtisa))
     if not argv.Silent:
-        print(f"-"*30)
-        print(f"{filename} translated to {URCLtranslations}:")
-        print(f"-"*30)
+        print("┌"+f"─"*size+"┐")
+        print("│"+ f"{txturcl:<{size}}" +"│")
+        print("└"+f"─"*size+"┘")
         if argv.Boring:
             print(main.toString(indent=20))
         else:
             print(main.toColour(indent=20))
-        print(f"-"*30)
-        print(f"In {end-start:.10f} seconds.")
-        print(f"Registers used ({len(main.regs)}): {main.regs}")
-        print(f"-"*30)
+        print("┌"+f"─"*size+"┐")
+        print("│"+f"{'@MINREG '+str(len(main.regs)):<{size}}│")
+        print("└"+f"─"*size+"┘")
 
     start = timer()
     out = translateISA(main, translatorISA)
     end = timer()
 
     if not argv.Silent:
-        print(f"-"*30)
-        print(f"{filename} translated to {ISAtranslations}:")
-        print(f"-"*30)
+        print("┌"+f"─"*size+"┐")
+        print("│"+ f"{txtisa:<{size}}" + "│")
+        print("└"+f"─"*size+"┘")
         for block in out:
             block.print(indent=20)
-        print(f"-"*30)
-        print(f"In {end-start:.10f} seconds.")
-        print(f"-"*30)
+        print("┌"+f"─"*size+"┐")
+        time = f"In {end-start:.10f} seconds."
+        print("│"+f"{time:<{size}}│")
+        print("└"+f"─"*size+"┘")
 
     if argv.Output:
         with open(argv.Output, "w+") as f:

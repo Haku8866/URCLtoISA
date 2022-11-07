@@ -5,8 +5,10 @@ from program import Program
 from copy import deepcopy
 if TYPE_CHECKING: from instruction import Instruction
 class Translator():
-    def __init__(self, translations: dict[str, Translation]):
+    def __init__(self, translations: dict[str, Translation], bits: int=8, mappings: dict[str, str]={}):
         self.translations = translations
+        self.bits = bits
+        self.mappings = mappings
 
     def substitute(self, ins: "Instruction"):
         translation = self.translations.get(ins.opcode)
@@ -48,5 +50,5 @@ class Translator():
 
     @staticmethod
     def fromFile(filename):
-        translations = Translation.parseFile(filename)
-        return Translator(translations)
+        translations, bits, mappings = Translation.parseFile(filename)
+        return Translator(translations, bits, mappings)

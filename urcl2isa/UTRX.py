@@ -138,7 +138,9 @@ class Translation():
   def readCases(translations: dict[str, "Translation"], unparsed: str):
     body: list[str] = []
     opcode = ""
-    params = "" 
+    params = ""
+    bits = -1
+    mappings = {}
     for line in unparsed:
       if opcode:
         if line == "}":
@@ -154,11 +156,16 @@ class Translation():
           params = ""
         else:
           params = params.rstrip("{")
-    return translations
+      else:
+        if line.startswith("@BITS "):
+          bits = int(line.split()[1])
+        elif line.startswith("@DEFINE "):
+          mappings[line.split()[1]] = line.split()[2]
+    return translations, bits, mappings
 
   @staticmethod
   def parseFile(filename):
     unparsed = Translation.readFile(filename)
     translations, unparsed = Translation.parseDescriptions(unparsed)
-    translations = Translation.readCases(translations, unparsed)
-    return translations
+    translations, bits, mappings = Translation.readCases(translations, unparsed)
+    return translations, bits, mappings
