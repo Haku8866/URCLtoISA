@@ -76,35 +76,35 @@ def main():
     main.optimise(optimisations, limit=minreg)
 
     end = timer()
-    txturcl = f"{filename} translated to {URCLtranslations}"
-    txtisa = f"{filename} translated to {ISAtranslations}"
+    txturcl = f" {filename} translated to {URCLtranslations} "
+    txtisa = f" {filename} translated to {ISAtranslations} "
     size = max(len(txturcl), len(txtisa))
     if not argv.Silent:
-        print("┌"+f"─"*size+"┐")
-        print("│"+ f"{txturcl:<{size}}" +"│")
-        print("└"+f"─"*size+"┘")
+        print("+"+f"-"*size+"+")
+        print("|"+ f"{txturcl:<{size}}" +"|")
+        print("+"+f"-"*size+"+")
         if argv.Boring:
             print(main.toString(indent=20))
         else:
             print(main.toColour(indent=20))
-        print("┌"+f"─"*size+"┐")
-        print("│"+f"{'@MINREG '+str(len(main.regs)):<{size}}│")
-        print("└"+f"─"*size+"┘")
+        print("+"+f"-"*size+"+")
+        print("|"+f"{' @MINREG '+str(len(main.regs))+' ':<{size}}|")
+        print("+"+f"-"*size+"+")
 
     start = timer()
     out = translateISA(main, translatorISA)
     end = timer()
 
     if not argv.Silent:
-        print("┌"+f"─"*size+"┐")
+        print("+"+f"-"*size+"+")
         print("│"+ f"{txtisa:<{size}}" + "│")
-        print("└"+f"─"*size+"┘")
+        print("+"+f"-"*size+"+")
         for block in out:
             block.print(indent=20)
-        print("┌"+f"─"*size+"┐")
-        time = f"In {end-start:.10f} seconds."
+        print("+"+f"-"*size+"+")
+        time = f" In {end-start:.10f} seconds. "
         print("│"+f"{time:<{size}}│")
-        print("└"+f"─"*size+"┘")
+        print("+"+f"-"*size+"+")
 
     if argv.Output:
         with open(argv.Output, "w+") as f:

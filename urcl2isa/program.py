@@ -255,11 +255,20 @@ class Program():
         return insert
 
     @staticmethod
+    def include(filename: str) -> list[str]:
+        with open(filename, "r") as f:
+            lines = [l.strip() for l in f]
+        return lines
+
+
+    @staticmethod
     # The program is a list of strings
     def parse(program: list[str], wordSize: int=8):
         headers: dict[int, str] = {}
         code: list[Instruction] = []
         regs: list[str] = []
+        defineI: list[str] = []
+        defineO: list[str] = []
         skip = False
 
         for l,line in enumerate(program):
@@ -271,16 +280,36 @@ class Program():
             elif "/*" in line:
                 skip = True
                 continue
+
             while "  " in line:
                 line = line.replace("  "," ")
             line = line.split("//")[0]
             ls = line.split()
-            if len(ls) == 3:
-                if ls[0] == "@DEFINE":
-                    old, new = ls[1:]
-                    for s,subline in enumerate(program[l:]):
-                        program[l+s] = subline.replace(f"{old}", f"{new}")
+
+            if(len(ls) > 1):
+                if (ls[0] == "@PRAGMA"):
                     continue
+                if (ls[0] == "@INCLUDE"):
+                    ret = program[0:l]
+                    fname = " ".join(ls[1:]).strip("\"")
+                    print(f"Including file {fname}")
+                    ret.extend(Program.include(fname))
+                    ret.extend(program[l+1:])
+                    return Program.parse(ret)
+
+            if len(ls) >= 3:
+                if ls[0] == "@DEFINE":
+                    old = ls[1]
+                    new = ls[2]
+                    defineI.append(old)
+                    defineO.append(new)
+                    continue
+            
+            for t,token in enumerate(ls):
+                for m,match in enumerate(defineI):
+                    if token == match:
+                        ls[t] = defineO[m]
+            line = " ".join(ls)
 
             header = Program.parseHeader(line)
             if header is not None:

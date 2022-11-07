@@ -1,12 +1,12 @@
-┌──────────────────────────────────────────────────────────────────┐
++------------------------------------------------------------------+
 | This is a list of translations for all core URCL instructions.   |
 | If you copy this file, and write your own translations for each  |
 | of these instructions, your ISA will run any URCL code provided  |
 | that it doesn't use custom ports or ports that you don't support.|
-└──────────────────────────────────────────────────────────────────┘
-┌──────────────────────────────────────────────────────────────────┐
++------------------------------------------------------------------+
++------------------------------------------------------------------+
 | Use this as a target ISA to simplify URCL to core URCL.          |
-└──────────────────────────────────────────────────────────────────┘
++------------------------------------------------------------------+
 
 ADD :: R R R {
     ADD @A @B @C
