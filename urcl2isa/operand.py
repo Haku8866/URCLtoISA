@@ -97,7 +97,7 @@ class Operand():
 
     def setTypeclass(self):
         typeClass = "A"
-        if self.type in [OpType.REGISTER]:
+        if self.type in [OpType.REGISTER, OpType.STACKPTR]:
             typeClass += "R"
             if self.value == "0" and self.type == OpType.REGISTER:
                 typeClass += "Z"
